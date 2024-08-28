@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.classes import Category, Product, CategoryIterator
+from src.classes import Category, Product, CategoryIterator, LawnGrass, Smartphone
 
 
 def test_product_init():
@@ -158,3 +158,45 @@ def test_category_iterator_next_products():
     assert next(iterator) == product2
     with pytest.raises(StopIteration):
         next(iterator)
+
+
+def test_smartphone_initialization():
+    smartphone = Smartphone(
+        name="iPhone 14",
+        description="Смартфон от Apple",
+        price=99999.99,
+        quantity=5,
+        efficiency=90.0,
+        model="iPhone 14",
+        memory=128,
+        color="черный"
+    )
+
+    assert smartphone.name == "iPhone 14"
+    assert smartphone.description == "Смартфон от Apple"
+    assert smartphone.price == 99999.99
+    assert smartphone.quantity == 5
+    assert smartphone.efficiency == 90.0
+    assert smartphone.model == "iPhone 14"
+    assert smartphone.memory == 128
+    assert smartphone.color == "черный"
+
+
+def test_lawn_grass_initialization():
+    lawn_grass = LawnGrass(
+        name="Садовая трава",
+        description="Трава для сада",
+        price=499.99,
+        quantity=10,
+        country="Россия",
+        germination_period="10 дней",
+        color="зеленый"
+    )
+
+    assert lawn_grass.name == "Садовая трава"
+    assert lawn_grass.description == "Трава для сада"
+    assert lawn_grass.price == 499.99
+    assert lawn_grass.quantity == 10
+    assert lawn_grass.country == "Россия"
+    assert lawn_grass.germination_period == "10 дней"
+    assert lawn_grass.color == "зеленый"

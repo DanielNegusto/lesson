@@ -53,6 +53,8 @@ class Product:
         return f"{self.name}, {format(self.price, '.2f')} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other):
+        if not isinstance(other, self.__class__):
+            raise TypeError("Нельзя складывать товары разных типов")
         total_cost = self.price * self.quantity + other.price * other.quantity
         return total_cost
 
@@ -70,9 +72,10 @@ class Category:
         Category.category_count += 1
         Category.product_count += sum(product.quantity for product in products)
 
-    def add_product(self, product: Product):
+    def add_product(self, product: Product | str):
+        if not isinstance(product, Product):
+            raise TypeError("Можно добавить только объекты класса Product или его наследников")
         self.__products.append(product)
-        Category.product_count += product.quantity
 
     def get_products(self):
         return self.__products
@@ -88,6 +91,42 @@ class Category:
     def __str__(self):
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+
+class Smartphone(Product):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: str,
+        color: str,
+    ):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
 
 
 class CategoryIterator:
