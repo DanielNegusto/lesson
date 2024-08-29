@@ -1,4 +1,15 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class CreationLoggingMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        class_name = self.__class__.__name__
+        params = ', '.join(f'{arg}' for arg in args)
+        print(f'{class_name} создан с параметрами: {params}')
+
+
+class BaseProduct(ABC):
     def __init__(self, name: str, description: str, price: float, quantity: int):
         if not isinstance(name, str) or not isinstance(description, str):
             raise TypeError("Имя и описание должны быть строками")
@@ -32,6 +43,33 @@ class Product:
             self.__price = value
 
     @classmethod
+    @abstractmethod
+    def new_product(cls, product_data: dict, existing_products: list):
+        """Метод для создания или обновления продукта"""
+        pass
+
+    @abstractmethod
+    def update_quantity(self, quantity: int):
+        """Метод для обновления количества продукта"""
+        pass
+
+    @abstractmethod
+    def delete_product(self):
+        """Метод для удаления продукта"""
+        pass
+
+    def __str__(self):
+        return f"{self.name}, {format(self.price, '.2f')} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        if not isinstance(other, self.__class__):
+            raise TypeError("Нельзя складывать товары разных типов")
+        total_cost = self.price * self.quantity + other.price * other.quantity
+        return total_cost
+
+
+class Product(CreationLoggingMixin, BaseProduct):
+    @classmethod
     def new_product(cls, product_data: dict, existing_products: list):
         for existing_product in existing_products:
             if existing_product.name == product_data["name"]:
@@ -48,15 +86,6 @@ class Product:
 
     def delete_product(self):
         self.quantity = 0
-
-    def __str__(self):
-        return f"{self.name}, {format(self.price, '.2f')} руб. Остаток: {self.quantity} шт."
-
-    def __add__(self, other):
-        if not isinstance(other, self.__class__):
-            raise TypeError("Нельзя складывать товары разных типов")
-        total_cost = self.price * self.quantity + other.price * other.quantity
-        return total_cost
 
 
 class Category:
