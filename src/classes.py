@@ -5,8 +5,8 @@ class CreationLoggingMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         class_name = self.__class__.__name__
-        params = ', '.join(f'{arg}' for arg in args)
-        print(f'{class_name} создан с параметрами: {params}')
+        params = ", ".join(f"{arg}" for arg in args)
+        print(f"{class_name} создан с параметрами: {params}")
 
 
 class BaseProduct(ABC):
@@ -17,6 +17,8 @@ class BaseProduct(ABC):
             raise ValueError("Цена должна быть положительным числом")
         if not isinstance(quantity, int) or quantity < 0:
             raise ValueError("Количество должно быть неотрицательным целым числом")
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
 
         self.name = name
         self.description = description
@@ -101,7 +103,7 @@ class Category:
         Category.category_count += 1
         Category.product_count += sum(product.quantity for product in products)
 
-    def add_product(self, product: Product | str):
+    def add_product(self, product: Product):
         if not isinstance(product, Product):
             raise TypeError("Можно добавить только объекты класса Product или его наследников")
         self.__products.append(product)
@@ -116,6 +118,16 @@ class Category:
             product_string = f"{product.name}, {product.price:.2f} руб. Остаток: {product.quantity} шт."
             product_strings.append(product_string)
         return "\n".join(product_strings)
+
+    def middle_price(self):
+        try:
+            total_price = sum(product.price * product.quantity for product in self.__products)
+            total_quantity = sum(product.quantity for product in self.__products)
+            average = total_price / total_quantity
+        except ZeroDivisionError:
+            print("На ноль делить нельзя")
+            return 0
+        return round(average, 2)
 
     def __str__(self):
         total_quantity = sum(product.quantity for product in self.__products)
